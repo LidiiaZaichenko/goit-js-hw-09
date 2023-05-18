@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const startBtn = document.querySelector('[data-start]');
 const daysRef = document.querySelector('[data-days]');
@@ -38,23 +38,22 @@ const options = {
       return;
     }
     startBtn.removeAttribute('disabled');
-
     const showTimer = () => {
       const now = new Date();
       localStorage.setItem('selectedData', selectedDates[0]);
       const selectData = new Date(localStorage.getItem('selectedData'));
-
+    
       if (!selectData) return;
-
+    
       const diff = selectData - now;
       const { days, hours, minutes, seconds } = convertMs(diff);
-      daysRef.textContent = days;
+      daysRef.textContent = addLeadingZero(days);
       hoursRef.textContent = addLeadingZero(hours);
       minutesRef.textContent = addLeadingZero(minutes);
       secondsRef.textContent = addLeadingZero(seconds);
-
+    
       if (
-        daysRef.textContent === '0' &&
+        daysRef.textContent === '00' &&
         hoursRef.textContent === '00' &&
         minutesRef.textContent === '00' &&
         secondsRef.textContent === '00'
@@ -62,7 +61,7 @@ const options = {
         clearInterval(timerId);
       }
     };
-
+    
     const onClick = () => {
       if (timerId) {
         clearInterval(timerId);
@@ -70,9 +69,12 @@ const options = {
       showTimer();
       timerId = setInterval(showTimer, 1000);
     };
-
+    
     startBtn.addEventListener('click', onClick);
+    
   },
 };
 
 flatpickr('#datetime-picker', { ...options });
+
+
